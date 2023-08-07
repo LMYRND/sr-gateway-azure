@@ -173,7 +173,7 @@ is_gpu_machine_up: 0
 log:
   level: DEBUG
 logo: python
-namespace: sr-gate-dev
+namespace: sr-gateway-azure
 network:
   deployment: sr-gateway
   name: sr-gateway
