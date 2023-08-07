@@ -27,6 +27,10 @@ spec:
         app: "{{ $appName }}-{{ $env }}"
         deploymentconfig: "{{ .name }}-{{ $env }}"
     spec:
+      volumes:
+        - name: "{{ $storageName }}-pv-{{ $env }}"
+          persistentVolumeClaim:
+            claimName: "{{ $storageName }}-pvc-{{ $env }}"
       affinity:
         nodeAffinity:
           requiredDuringSchedulingIgnoredDuringExecution:
@@ -36,10 +40,6 @@ spec:
                 operator: In
                 values:
                 - "{{ $nodeAffintyLabel }}"
-      volumes:
-        - name: "{{ $storageName }}-pv-{{ $env }}"
-          persistentVolumeClaim:
-            claimName: "{{ $storageName }}-pvc-{{ $env }}"
       containers:
         - args:
             - ./run.sh

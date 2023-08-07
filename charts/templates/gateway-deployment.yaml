@@ -4,6 +4,7 @@
   {{- $imageName := .Values.imageName | default "lmy/sr-gate-wo-sa" }}
   {{- $versionTag := .Values.versionTag | default "latest" }}
   {{- $namespace := .Values.namespace }}
+  {{- $storageName := .Values.storage.name }}
   {{- $env := .Values.env | default "dev" }}
   {{- $registryPullSecret := .Values.registryPullSecret }}
   {{- $nodeAffintyLabel := .Values.nodeAffinityLabel | default "default" }}
@@ -28,12 +29,10 @@ spec:
         app: "{{ $appName }}-{{ $env }}"
         deploymentconfig: "{{ $name }}-{{ $env }}"
     spec:
-      {{- with .Values.storage }}
       volumes:
-        - name: "{{ .name }}-pv-{{ $env }}"
+        - name: "{{ $storageName }}-pv-{{ $env }}"
           persistentVolumeClaim:
-            claimName: "{{ .name }}-pvc-{{ $env }}"
-      {{- end }}
+            claimName: "{{ $storageName }}-pvc-{{ $env }}"
       affinity:
         nodeAffinity:
           requiredDuringSchedulingIgnoredDuringExecution:
@@ -52,7 +51,7 @@ spec:
           name: "{{ $name }}-{{ $env }}"
           image: "{{ $registry }}/{{ $imageName }}:{{ $versionTag }}"
           volumeMounts:
-            - name: "{{ .Values.storage.name }}-pv-{{ $env }}"
+            - name: "{{ $storageName }}-pv-{{ $env }}"
               mountPath: /data
           env:
             - name: RABBIT_HOST
