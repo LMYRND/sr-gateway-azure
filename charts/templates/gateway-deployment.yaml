@@ -28,8 +28,6 @@ spec:
         app: "{{ $appName }}-{{ $env }}"
         deploymentconfig: "{{ $name }}-{{ $env }}"
     spec:
-      imagePullSecrets:
-      - name: {{ $registryPullSecret }}
       {{- with .Values.storage }}
       volumes:
         - name: "{{ .name }}-pv-{{ $env }}"
