@@ -28,6 +28,7 @@ metadata:
     ingress.kubernetes.io/app-root: "/"
     ingress.kubernetes.io/timeout: "300"
 spec:
+  rules:
   - host: {{ .hostName }}
     http:
       paths:
