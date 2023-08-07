@@ -155,7 +155,7 @@ deployment_rest:
 elastic:
   host: my-deployment-f7647c.es.westeurope.azure.elastic-cloud.com
   password: bla
-  port: 9243
+  port: 443
   username: bla
 env: azure
 export_tilesets:
