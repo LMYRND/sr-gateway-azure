@@ -6,6 +6,7 @@
   {{- $namespace := .Values.namespace }}
   {{- $env := .Values.env | default "dev" }}
   {{- $registryPullSecret := .Values.registryPullSecret }}
+  {{- $nodeAffintyLabel := .Values.nodeAffinityLabel | default "default" }}
   {{- $replicaCount := .Values.deployment_gateway.container.replicaCount | default 1 }}
 kind: Deployment
 apiVersion: apps/v1
