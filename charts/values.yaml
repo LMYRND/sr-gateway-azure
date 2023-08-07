@@ -211,7 +211,7 @@ storage:
   shareName: data
   storageCapacity: 100Gi
   storageClassName: azure-file-sc
-  storageRequest: 20Gi
+  storageRequest: 50Gi
 texture:
   datasource_id: 59
   full_path: /data/SR/sr_texture_dev
