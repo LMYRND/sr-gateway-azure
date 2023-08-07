@@ -9,6 +9,7 @@ metadata:
   name: "{{ .name }}-{{ $env }}"
   namespace: {{ $namespace }}
 spec:
+  type: LoadBalancer
   ports:
     - protocol: TCP
       port:  {{ .port }}
