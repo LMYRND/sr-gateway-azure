@@ -10,7 +10,7 @@ deployment_gateway:
     argument: GatewayService
     containerPort: 4050
     replicaCount: 1
-  name: sr-gateway
+  name: sr-gateway-server
 deployment_rest:
   - container:
       argument: cityJsons
