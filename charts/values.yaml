@@ -1,0 +1,220 @@
+appName: sr-gate
+autoscaling:
+  enabled: false
+  maxReplicas: 100
+  minReplicas: 1
+  targetCPUUtilizationPercentage: 80
+nodeAffinityLabel: default
+deployment_gateway:
+  container:
+    argument: GatewayService
+    containerPort: 4050
+    replicaCount: 1
+  name: sr-gateway
+deployment_rest:
+- container:
+    argument: cityJsons
+    replicaCount: 2
+  name: sr-city-jsons
+- container:
+    argument: geoJsons
+    replicaCount: 2
+  name: sr-geo-jsons
+- container:
+    argument: importCityJson
+    replicaCount: 1
+  name: sr-import-city-json
+- container:
+    argument: importGeoJson
+    replicaCount: 2
+  name: sr-import-geo-json
+- container:
+    argument: locker
+    replicaCount: 1
+  name: sr-locker
+- container:
+    argument: lod2Extraction
+    replicaCount: 2
+  name: sr-lod2-extraction
+- container:
+    argument: pointCloudExtraction
+    replicaCount: 2
+  name: sr-point-cloud-extraction
+- container:
+    argument: chunkSlicer
+    replicaCount: 2
+  name: sr-chunk-slicer
+- container:
+    argument: chunkProcessor
+    replicaCount: 2
+  name: sr-chunk-processor
+- container:
+    argument: reportStorage
+    replicaCount: 1
+  name: sr-report-storage
+- container:
+    argument: separator
+    replicaCount: 2
+  name: sr-separator
+- container:
+    argument: payloadSeparator
+    replicaCount: 2
+  name: sr-payload-separator
+- container:
+    argument: store
+    replicaCount: 2
+  name: sr-store
+- container:
+    argument: importDetections
+    replicaCount: 2
+  name: sr-import-detections
+- container:
+    argument: importSingleDetection
+    replicaCount: 2
+  name: sr-import-single-detection
+- container:
+    argument: importOpenings
+    replicaCount: 2
+  name: sr-import-openings
+- container:
+    argument: importRoofDetection
+    replicaCount: 2
+  name: sr-import-roof-detection
+- container:
+    argument: extractProcess
+    replicaCount: 2
+  name: sr-extract-process
+- container:
+    argument: runRecipeStep
+    replicaCount: 2
+  name: sr-run-recipe-step
+- container:
+    argument: runExtractionStep
+    replicaCount: 1
+  name: sr-run-extraction-step
+- container:
+    argument: rasterExtraction
+    replicaCount: 2
+  name: sr-raster-extraction
+- container:
+    argument: updateTextures
+    replicaCount: 1
+  name: sr-updat-textures
+- container:
+    argument: updateTexturesUuids
+    replicaCount: 1
+  name: sr-update-textures-uuids
+- container:
+    argument: updateTextureByUuid
+    replicaCount: 2
+  name: sr-update-texture-by-uuid
+- container:
+    argument: importObjectLocation
+    replicaCount: 2
+  name: sr-import-object-location
+- container:
+    argument: objectLocations
+    replicaCount: 2
+  name: sr-object-locations
+- container:
+    argument: attributes
+    replicaCount: 1
+  name: sr-attributes
+- container:
+    argument: importAttributes
+    replicaCount: 2
+  name: sr-import-attributes
+- container:
+    argument: logsSummary
+    replicaCount: 1
+  name: sr-logs-summary
+- container:
+    argument: exportObjectsGltfs2Fbxs
+    replicaCount: 2
+  name: sr-export-objects-gltfs2fbxs
+- container:
+    argument: singleGltfs2Fbx
+    replicaCount: 2
+  name: sr-single-gltfs2fbx
+- container:
+    argument: exportObjects3DTiles
+    replicaCount: 2
+  name: sr-export-object-3d-tiles
+- container:
+    argument: singleCreateUnionB3dm
+    replicaCount: 2
+  name: sr-single-creat-union-b3dm
+- container:
+    argument: exportObjectsB3dm
+    replicaCount: 2
+  name: sr-export-objects-b3dm
+- container:
+    argument: exportObjectsI3dm
+    replicaCount: 2
+  name: sr-export-objects-i3dm
+elastic:
+  host: https://my-deployment-f7647c.es.westeurope.azure.elastic-cloud.com
+  password: bla
+  port: 924
+  username: bla
+env: azure
+export_tilesets:
+  output: /data/SR/export_tilesets/final_output
+  temp: /data/SR/export_tilesets/temp
+extractor:
+  internal_folder: /data/SR/extractors/internal_folder
+  public_folder: /data/extractors_public_folder
+fbx_path: /data/SR/fbx_output
+gate_web_port: '4052'
+imageName: lmy/sr-gate
+images_limit: 2
+is_created_texture: 0
+is_gpu_machine_up: 0
+log:
+  level: DEBUG
+logo: python
+namespace: sr-gate-dev
+network:
+  deployment: sr-gateway
+  name: sr-gateway
+  hostName: sr-gateway.azure.io
+  port: 4052
+  targetPort: 4052
+ps3d_server:
+  host: http://ps3d-server-sr-editor.apps.cgr2ll7c.northeurope.aroapp.io
+  layers_dir: /data/SR/layers3d
+  port: 80
+ps_dir:
+  mount_root_dir: /data/
+  original_root_dir: /mnt/data
+psdbs:
+  host: 172.30.172.154
+  port: '8090'
+pullPolicy: IfNotPresent
+rabbit:
+  host: 192.168.115.5
+  password: bla
+  port: '5672'
+  rpc_exchange: LMY
+  username: bla
+redis:
+  ip: 10.0.10.8
+  port: '6382'
+registry: srregis.azurecr.io
+registryPullSecret: acr-secret
+storage:
+  accessModes: ReadWriteMany
+  azurestorageaccountkey: bW9jaw==
+  azurestorageaccountname: bW9jaw==
+  name: sr-gate-data
+  secretName: secret-sr-gateway
+  shareName: data
+  storageCapacity: 100Gi
+  storageClassName: azure-file-sc
+  storageRequest: 20Gi
+texture:
+  datasource_id: 59
+  full_path: /data/SR/sr_texture_dev
+  relative_path: /sr_texture_dev
+tz: Asia/Jerusalem
+versionTag: 4.2.27_hetro

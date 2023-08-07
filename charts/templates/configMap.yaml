@@ -1,0 +1,41 @@
+{{- $namespace := .Values.namespace -}}
+{{- $env := .Values.env -}}
+apiVersion: "v1"
+kind: "ConfigMap"
+metadata:
+  name: "{{ $namespace }}-{{ $env }}-cm"
+  namespace: {{ $namespace }}
+data:
+  RABBIT_PORT: "{{ .Values.rabbit.port }}"
+  RABBIT_HOST: "{{ .Values.rabbit.host }}"
+  RPC_EXCHANGE: "{{ .Values.rabbit.rpc_exchange }}"
+  WEB_PORT:  "{{ .Values.gate_web_port }}"
+  LOG_LEVEL: "{{ .Values.log.level }}"
+  REDIS_IP:  "{{ .Values.redis.ip }}"
+  REDIS_PORT:  "{{ .Values.redis.port }}"
+  SR_TEXTURE_DIR:  "{{ .Values.texture.relative_path }}"
+  SR_TEXTURE_FULL_PATH:  "{{ .Values.texture.full_path }}"
+  PSDBS_HOST:  "{{ .Values.psdbs.host }}"
+  PSDBS_PORT:  "{{ .Values.psdbs.port }}"
+  TZ: "{{ .Values.tz }}"
+
+  MOUNT_PS_ROOT_DIR: "{{ .Values.ps_dir.mount_root_dir }}"
+  UBUNTU_PS_ROOT_DIR: "{{ .Values.ps_dir.original_root_dir }}"
+
+  ELASTIC_HOST: "{{ .Values.elastic.host }}"
+  ELASTIC_PORT: "{{ .Values.elastic.port }}"
+  
+  LAYERS_SERVER_HOST: "{{ .Values.ps3d_server.host }}"
+  LAYERS_SERVER_PORT: "{{ .Values.ps3d_server.port }}"
+  
+  IS_GPU_MACHINE_UP: "{{ .Values.is_gpu_machine_up }}"
+  EXTRACTOR_WORKSPACE: "{{ .Values.extractor.public_folder }}"
+  EXTRACTOR_INTERNAL_WORKSPACE: "{{ .Values.extractor.internal_folder }}"
+  ORIGINAL_INTERNAL_WORKSPACE: "{{ .Values.extractor.internal_folder }}"
+  IS_CREATE_TEXTURE:  "{{ .Values.is_created_texture }}"
+  IMAGES_LIMIT: "{{ .Values.images_limit}}"
+  DATASOURCE_ID: "{{ .Values.texture.datasource_id }}"
+  EXPORT_FBX_PATH: "{{ .Values.fbx_path }}"
+  TEMP_PATH: "{{ .Values.export_tilesets.temp }}"
+  EXPORT_TILES_PATH: "{{ .Values.export_tilesets.output }}"
+  LAYERS_DIR: "{{ .Values.ps3d_server.layers_dir }}"

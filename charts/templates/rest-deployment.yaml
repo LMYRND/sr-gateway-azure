@@ -1,0 +1,234 @@
+{{- $registry := .Values.registry | default "srregis.azurecr.io" }}
+  {{- $nodeAffintyLabel := .Values.nodeAffinityLabel | default "default" }}
+  {{- $appName := .Values.appName | default "sr-gate" }}
+  {{- $imageName := .Values.imageName | default "lmy/sr-gate-wo-sa" }}
+  {{- $versionTag := .Values.versionTag | default "latest" }}
+  {{- $namespace := .Values.namespace }}
+  {{- $storageName := .Values.storage.name }}
+  {{- $env := .Values.env | default "dev" }}
+  {{- $registryPullSecret := .Values.registryPullSecret }}
+  {{- range .Values.deployment_rest }}
+
+kind: Deployment
+apiVersion: apps/v1
+metadata:
+  name: "{{ .name }}-{{ $env }}"
+  namespace: {{ $namespace }}
+  labels:
+    app: "{{ $appName }}-{{ $env }}"
+spec:
+  replicas: {{ .container.replicaCount }}
+  selector:
+    matchLabels:
+      app: "{{ $appName }}-{{ $env }}"
+  template:
+    metadata:
+      labels:
+        app: "{{ $appName }}-{{ $env }}"
+        deploymentconfig: "{{ .name }}-{{ $env }}"
+    spec:
+      affinity:
+        nodeAffinity:
+          requiredDuringSchedulingIgnoredDuringExecution:
+            nodeSelectorTerms:
+            - matchExpressions:
+              - key: agentpool
+                operator: In
+                values:
+                - "{{ $nodeAffintyLabel }}"
+      volumes:
+        - name: "{{ $storageName }}-pv-{{ $env }}"
+          persistentVolumeClaim:
+            claimName: "{{ $storageName }}-pvc-{{ $env }}"
+      containers:
+        - args:
+            - ./run.sh
+            - {{ .container.argument }}
+          command:
+            - /bin/bash
+          name: "{{ .name }}-{{ $env }}"
+          image: "{{ $registry }}/{{ $imageName }}:{{ $versionTag }}"
+          volumeMounts:
+            - name: "{{ $storageName }}-pv-{{ $env }}"
+              mountPath: /data
+          env:
+            - name: RABBIT_HOST
+              valueFrom:
+                configMapKeyRef:
+                  name: "{{ $namespace }}-{{ $env }}-cm"
+                  key: RABBIT_HOST
+            - name: RABBIT_PORT
+              valueFrom:
+                configMapKeyRef:
+                  name: "{{ $namespace }}-{{ $env }}-cm"
+                  key: RABBIT_PORT
+            - name: RABBIT_USER
+              valueFrom:
+                secretKeyRef:
+                  name: "rabbit-{{ $env }}-secret"
+                  key: username
+            - name: RABBIT_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: "rabbit-{{ $env }}-secret"
+                  key: password
+            - name: RPC_EXCHANGE
+              valueFrom:
+                configMapKeyRef:
+                  name: "{{ $namespace }}-{{ $env }}-cm"
+                  key: RPC_EXCHANGE
+            - name: WEB_PORT
+              valueFrom:
+                configMapKeyRef:
+                  name: "{{ $namespace }}-{{ $env }}-cm"
+                  key: WEB_PORT
+            - name: LOG_LEVEL
+              valueFrom:
+                configMapKeyRef:
+                  name: "{{ $namespace }}-{{ $env }}-cm"
+                  key: LOG_LEVEL
+            - name: REDIS_IP
+              valueFrom:
+                configMapKeyRef:
+                  name: "{{ $namespace }}-{{ $env }}-cm"
+                  key: REDIS_IP
+            - name: REDIS_PORT
+              valueFrom:
+                configMapKeyRef:
+                  name: "{{ $namespace }}-{{ $env }}-cm"
+                  key: REDIS_PORT
+            - name: SR_TEXTURE_DIR
+              valueFrom:
+                configMapKeyRef:
+                  name: "{{ $namespace }}-{{ $env }}-cm"
+                  key: SR_TEXTURE_DIR
+            - name: SR_TEXTURE_FULL_PATH
+              valueFrom:
+                configMapKeyRef:
+                  name: "{{ $namespace }}-{{ $env }}-cm"
+                  key: SR_TEXTURE_FULL_PATH
+            - name: PSDBS_HOST
+              valueFrom:
+                configMapKeyRef:
+                  name: "{{ $namespace }}-{{ $env }}-cm"
+                  key: PSDBS_HOST
+            - name: PSDBS_PORT
+              valueFrom:
+                configMapKeyRef:
+                  name: "{{ $namespace }}-{{ $env }}-cm"
+                  key: PSDBS_PORT
+            - name: TZ
+              valueFrom:
+                configMapKeyRef:
+                  name: "{{ $namespace }}-{{ $env }}-cm"
+                  key: TZ
+            - name: MOUNT_PS_ROOT_DIR
+              valueFrom:
+                configMapKeyRef:
+                  name: "{{ $namespace }}-{{ $env }}-cm"
+                  key: MOUNT_PS_ROOT_DIR
+            - name: UBUNTU_PS_ROOT_DIR
+              valueFrom:
+                configMapKeyRef:
+                  name: "{{ $namespace }}-{{ $env }}-cm"
+                  key: UBUNTU_PS_ROOT_DIR
+            - name: ELASTIC_HOST
+              valueFrom:
+                configMapKeyRef:
+                  name: "{{ $namespace }}-{{ $env }}-cm"
+                  key: ELASTIC_HOST
+            - name: ELASTIC_PORT
+              valueFrom:
+                configMapKeyRef:
+                  name: "{{ $namespace }}-{{ $env }}-cm"
+                  key: ELASTIC_PORT
+            - name: IS_GPU_MACHINE_UP
+              valueFrom:
+                configMapKeyRef:
+                  name: "{{ $namespace }}-{{ $env }}-cm"
+                  key: IS_GPU_MACHINE_UP
+            - name: EXTRACTOR_WORKSPACE
+              valueFrom:
+                configMapKeyRef:
+                  name: "{{ $namespace }}-{{ $env }}-cm"
+                  key: EXTRACTOR_WORKSPACE
+            - name: EXTRACTOR_INTERNAL_WORKSPACE
+              valueFrom:
+                configMapKeyRef:
+                  name: "{{ $namespace }}-{{ $env }}-cm"
+                  key: EXTRACTOR_INTERNAL_WORKSPACE
+            - name: ORIGINAL_INTERNAL_WORKSPACE
+              valueFrom:
+                configMapKeyRef:
+                  name: "{{ $namespace }}-{{ $env }}-cm"
+                  key: ORIGINAL_INTERNAL_WORKSPACE
+            - name: IS_CREATE_TEXTURE
+              valueFrom:
+                configMapKeyRef:
+                  name: "{{ $namespace }}-{{ $env }}-cm"
+                  key: IS_CREATE_TEXTURE
+                  
+            - name: DATASOURCE_ID
+              valueFrom:
+                configMapKeyRef:
+                  name: "{{ $namespace }}-{{ $env }}-cm"
+                  key: DATASOURCE_ID
+
+            - name: IMAGES_LIMIT
+              valueFrom:
+                configMapKeyRef:
+                  name: "{{ $namespace }}-{{ $env }}-cm"
+                  key: IMAGES_LIMIT
+            - name: ELASTIC_USER
+              valueFrom:
+                secretKeyRef:
+                  name: "elastic-{{ $env }}-secret"
+                  key: username
+            - name: ELASTIC_PASS
+              valueFrom:
+                secretKeyRef:
+                  name: "elastic-{{ $env }}-secret"
+                  key: password
+            - name: LAYERS_SERVER_HOST
+              valueFrom:
+                configMapKeyRef:
+                  name: "{{ $namespace }}-{{ $env }}-cm"
+                  key: LAYERS_SERVER_HOST
+            - name: LAYERS_SERVER_PORT
+              valueFrom:
+                configMapKeyRef:
+                  name: "{{ $namespace }}-{{ $env }}-cm"
+                  key: LAYERS_SERVER_PORT
+            - name: EXPORT_FBX_PATH
+              valueFrom:
+                configMapKeyRef:
+                  name: "{{ $namespace }}-{{ $env }}-cm"
+                  key: EXPORT_FBX_PATH
+                  
+            - name: TEMP_PATH
+              valueFrom:
+                configMapKeyRef:
+                  name: "{{ $namespace }}-{{ $env }}-cm"
+                  key: TEMP_PATH
+            - name: EXPORT_TILES_PATH
+              valueFrom:
+                configMapKeyRef:
+                  name: "{{ $namespace }}-{{ $env }}-cm"
+                  key: EXPORT_TILES_PATH
+            - name: LAYERS_DIR
+              valueFrom:
+                configMapKeyRef:
+                  name: "{{ $namespace }}-{{ $env }}-cm"
+                  key: LAYERS_DIR
+    
+      restartPolicy: Always
+      terminationGracePeriodSeconds: 30
+      dnsPolicy: ClusterFirst
+      schedulerName: default-scheduler
+  strategy:
+    type: RollingUpdate
+    rollingUpdate:
+      maxUnavailable: 25%
+      maxSurge: 25%
+---
+{{- end }}

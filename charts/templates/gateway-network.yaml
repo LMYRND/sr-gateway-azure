@@ -1,0 +1,43 @@
+{{- $namespace := .Values.namespace }}
+{{- $env := .Values.env }}
+{{- $appName := .Values.appName | default "sr-gate" }}
+{{- $gateway_name := .Values.deployment_gateway.name | default "sr-gate"}}
+{{- with .Values.network }}
+apiVersion: v1
+kind: Service
+metadata:
+  name: "{{ .name }}-{{ $env }}"
+  namespace: {{ $namespace }}
+spec:
+  ports:
+    - protocol: TCP
+      port:  {{ .port }}
+      targetPort: {{ .targetPort }}
+  selector:
+    deploymentconfig: "{{ $gateway_name }}-{{ $env }}"
+
+---
+
+kind: Ingress
+apiVersion: networking.k8s.io/v1
+metadata:
+  name: "{{ .name }}-{{ $env }}"
+  namespace: {{ $namespace }}
+  annotations:
+    ingress.kubernetes.io/proxy-body-size: 100M
+    ingress.kubernetes.io/app-root: "/"
+    ingress.kubernetes.io/timeout: "300"
+spec:
+  - host: {{ .hostName }}
+    http:
+      paths:
+      - path: /
+        pathType: Prefix
+        backend:
+          service:
+            name: "{{ .name }}-{{ $env }}"
+            port:
+              number: {{ .targetPort }}
+   
+---
+{{- end }}
