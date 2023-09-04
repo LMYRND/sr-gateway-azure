@@ -8,8 +8,6 @@ kind: Service
 metadata:
   name: "{{ .name }}-{{ $env }}"
   namespace: {{ $namespace }}
-  annotations:
-    service.beta.kubernetes.io/azure-load-balancer-internal: "true"  
 spec:
   type: LoadBalancer
   ports:
@@ -30,12 +28,17 @@ metadata:
     ingress.kubernetes.io/proxy-body-size: 100M
     ingress.kubernetes.io/app-root: "/"
 spec:
+  ingressClassName: nginx
+  tls:
+   - hosts:
+     - {{ .hostName }}
+     secretName: sr-gateway-tls
   rules:
   - host: {{ .hostName }}
     http:
       paths:
       - path: /
-        pathType: ImplementationSpecific
+        pathType: Prefix
         backend:
           service:
             name: "{{ .name }}-{{ $env }}"
